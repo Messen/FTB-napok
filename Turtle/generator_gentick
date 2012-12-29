@@ -1,0 +1,33 @@
+function tick()
+  rs.setOutput("top", true)
+  rs.setOutput("left", true)
+  sleep(0.2)
+  rs.setOutput("top", false)
+  rs.setOutput("left", false)
+  sleep(0.2)
+end
+
+local quit = false
+local buckets = 20
+
+print("Working")
+print("Press 'x' to exit")
+
+repeat
+  os.startTimer(0.7)
+  local event, p1 = os.pullEvent()
+  if (event == "key") and (p1 == 45) then
+    quit = true
+  end
+  turtle.select(1)
+  if turtle.getItemCount(1) > 1 then
+    turtle.place()
+  end
+  tick()
+until quit == true
+
+print("Stopping tickmachine")
+while turtle.getItemCount(1) < buckets do
+  tick()
+  sleep(1)
+end

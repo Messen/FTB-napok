@@ -1,0 +1,11 @@
+print("Tikk.... Takk...")
+
+function toggle(side)
+  rs.setOutput(side, not rs.getOutput(side))
+end
+
+while true do
+  toggle("back")
+  sleep(0.5)
+end
+
