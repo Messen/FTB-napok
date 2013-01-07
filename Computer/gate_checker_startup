@@ -1,0 +1,46 @@
+function chkgate(side)
+  if peripheral.isPresent(side) then
+    if peripheral.getType(side) == "gateReader" then
+      return true
+    end
+  end
+  return false
+end
+
+function full(side)
+  if chkgate(side) then
+    local gate = peripheral.wrap(side)
+    local data = gate.get()
+    return data["Full Energy"]
+  end
+end
+
+function showState(state)
+  term.clear()
+  local st = "Not Full"
+  if not state then
+    st = "Full"
+  end
+  term.setCursorPos(3, 4)
+  term.write("The current status is "..st)
+  term.setCursorPos(3, 7)
+  term.write("Press x for exit")
+end
+
+local inSide = "bottom"
+local outSide = "left"
+local state = false
+
+showState()
+repeat
+  os.startTimer(5)
+  event, par1 = os.pullEvent()
+  if event == "timer" then
+    state = not full(inSide)
+    rs.setOutput(outSide, state)
+  end
+  showState(state)
+until event == "key" and par1 == 45
+rs.setOutput(outSide, false)
+os.shutdown()
+

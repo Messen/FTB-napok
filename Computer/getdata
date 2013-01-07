@@ -1,0 +1,7 @@
+local side = "bottom"
+local p = peripheral.wrap(side)
+local data = p.get()
+
+for i,j in pairs(data) do
+  print(i.." : "..tostring(j))
+end
