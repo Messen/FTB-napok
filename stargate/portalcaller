@@ -1,0 +1,128 @@
+local mside = "top"
+local oSide = "bottom"
+local text = colors.black
+local bInactive = colors.red
+local bActive = colors.lime
+local active = ""
+
+local monitor = peripheral.wrap(mside)
+local mx, my = monitor.getSize()
+local bmx = 0
+
+local button = {}
+
+function addButton(bx, by, width, id, name)
+  if name == nil then
+    return
+  end
+  button[name] = {}
+  button[name]["x"] = bx
+  button[name]["y"] = by
+  if width < #name + 2 then
+    width = #name + 2
+  end
+  button[name]["width"] = width
+  button[name]["id"] = id
+  print("Button "..name.." added")
+end
+
+function getState(name)
+  if name == active then
+    return true
+  end
+  return false
+end
+
+function drawButton(bx, by, width, name)
+  monitor.setTextColor(text)
+  monitor.setBackgroundColor(bInactive)
+  if getState(name) then
+    monitor.setBackgroundColor(bActive)
+  end
+  for i = 0, 2, 1 do
+    monitor.setCursorPos(bx, by + i)
+    for j = 1, width, 1 do
+      monitor.write(" ")
+    end
+  end
+  local tpos = (width - #name) / 2
+  monitor.setCursorPos(bx + tpos, by + 1)
+  monitor.write(name)
+end
+
+function drawScreen()
+  for name, par in pairs(button) do
+    drawButton(par["x"], par["y"], par["width"], name)
+  end
+end
+
+function isClicked(x, y, name)
+  local btn = button[name]
+  if ((x >= btn["x"]) and (x <= btn["x"] + btn["width"])) then
+    if ((y >= btn["y"]) and (y <= btn["y"] + 2)) then
+      return true
+    end  
+  end
+  return false
+end
+
+
+function click(x, y)
+  for name, par in pairs(button) do
+    if isClicked(x, y, name) then
+      if getState(name) then
+        active = ""
+        rs.setBundledOutput(oSide, 0)
+      else
+        active = name
+        rs.setBundledOutput(oSide, par["id"])
+      end      
+    end
+  end  
+end
+
+
+
+monitor.setCursorBlink(false)
+monitor.setBackgroundColor(colors.black)
+monitor.clear()
+print("Starting Messen OS")
+print("Monitor size")
+print("MaxX: "..mx.." MaxY: "..my)
+print(" ")
+
+function genButtons()
+  local file = fs.open(shell.resolve("menu"), "r")
+  local menu = {}
+  local line = ""
+  local idx = 1
+  repeat
+    line = file.readLine()
+    print(line)
+    if line == nil then
+      break
+    end
+    menu[line] = idx
+    idx = idx + 1
+    if #line + 2 > bmx then
+      bmx = #line + 2
+    end
+  until (line == nil) or (idx > 8)
+  file.close()
+  
+  for name, value in pairs(menu) do
+    if value <= 4 then
+      addButton(3, 3 + ((value -1) * 4), bmx, value, name)
+    else
+      addButton(mx - 2 - bmx, 3 + ((value -5) * 4), bmx, value, name)
+    end
+  end
+end
+
+genButtons()
+
+while true do
+  drawScreen()
+  local event, side, x, y = os.pullEvent("monitor_touch")
+  click(x, y)
+end

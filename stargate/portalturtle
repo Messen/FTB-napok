@@ -1,0 +1,30 @@
+local lastcall = 0
+local iSide = "bottom"
+
+print("Starting Portal Handler")
+
+function change(slot)
+  if lastcall > 0 then
+    turtle.suck()
+  end
+  if slot > 0 then
+    turtle.suck()
+    if turtle.select(slot) then
+      lastcall = 0
+      if turtle.getItemCount(slot) > 0 then
+        turtle.drop()
+        lastcall = slot
+      end
+    end
+  else
+    turtle.suck()
+    lastcall = 0  
+  end
+end
+
+
+repeat
+  event, par = os.pullEvent("redstone")
+  change(rs.getBundledInput(iSide))
+
+until false
