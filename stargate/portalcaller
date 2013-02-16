@@ -92,7 +92,7 @@ print("MaxX: "..mx.." MaxY: "..my)
 print(" ")
 
 function genButtons()
-  local file = fs.open(shell.resolve("menu"), "r")
+  local file = fs.open(shell.resolve("portalmenu"), "r")
   local menu = {}
   local line = ""
   local idx = 1
