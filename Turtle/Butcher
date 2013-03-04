@@ -1,0 +1,25 @@
+function drop()
+  turtle.turnLeft()
+  turtle.turnLeft()
+  for i = 1, 16, 1 do
+    turtle.select(i)
+    turtle.drop()
+  end
+  turtle.turnLeft()
+  turtle.turnLeft()
+end
+
+print("Press 'x' to exit")
+
+repeat
+  os.startTimer(5)
+  event, p1 = os.pullEvent()
+  if event == "timer" then
+    while turtle.attack() do
+      sleep(0.1)
+    end
+    drop()
+  end
+
+until event == "key" and p1 == 45
+os.shutdown()
