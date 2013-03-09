@@ -1,0 +1,38 @@
+local args = {...}
+local a, b
+a = tonumber(args[1])
+b = tonumber(args[2])
+
+
+function put()
+  turtle.select(2)
+  turtle.placeDown()
+end
+
+function forward()
+  if turtle.getFuelLevel() < 10 then
+    turtle.select(1)
+    turtle.refuel()
+  end
+  turtle.forward()
+end
+
+function row(length)
+  turtle.up()
+  for i=1, length, 1 do
+    put()
+    if i < length then
+      forward()
+    end
+  end
+end
+
+function wall(length, height)
+  for i= 1, height, 1 do
+    row(length)
+    turtle.turnLeft()
+    turtle.turnLeft()
+  end
+end
+
+wall(a, b)
