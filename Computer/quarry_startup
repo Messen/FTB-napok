@@ -1,0 +1,36 @@
+local cable = "bottom"
+
+function deploy()
+  rs.setBundledOutput(cable, colors.gray)
+  sleep(1)
+  rs.setBundledOutput(cable, 0)
+end
+
+function pickup()
+  rs.setBundledOutput(cable, colors.black)
+  sleep(1)
+  rs.setBundledOutput(cable, 0)
+end
+
+function forward()
+  rs.setBundledOutput(cable, colors.white)
+  sleep(1)
+  rs.setBundledOutput(cable, 0)
+end
+
+function mine()
+  deploy()
+  sleep(30)
+  pickup()
+  sleep(5)
+  forward()
+  sleep(3)
+end
+
+repeat
+  local event, p1 = os.pullEvent()
+  if event == "redstone" then
+    mine()
+  end
+until false
+
