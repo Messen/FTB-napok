@@ -1,0 +1,21 @@
+
+gate = peripheral.wrap("right")
+
+
+
+while true do
+  data = gate.get()
+  if data["Discharging Empty Item"]
+    and not data["Discharging Fully Charged Item"] 
+  then
+    turtle.suckUp()
+    turtle.drop()
+  end
+  
+  turtle.select(1)
+  if turtle.getItemCount(1) > 0 then
+    turtle.dropUp()
+  end
+  sleep(10)
+end
+

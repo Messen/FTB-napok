@@ -1,0 +1,11 @@
+
+gate = peripheral.wrap("right")
+
+while true do
+  data = gate.get()
+  if data["Charging Fully Charged Item"] then
+    turtle.suck()
+    turtle.dropDown()
+  end
+  sleep(10)
+end
