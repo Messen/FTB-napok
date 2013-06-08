@@ -1,0 +1,106 @@
+local modem = peripheral.wrap("top")
+local chat = peripheral.wrap("left")
+local monitor = peripheral.wrap("back")
+local server = 0
+modem.open(server)
+
+local level = 0
+local userlevel = 65536
+local last = 1
+local max = 4
+local mode = {"Safe","Workshop","Mining","Fun :)"}
+local bmaxx = 20
+local bmaxy = 3
+local bbg = ""
+local textcolor = colors.black
+local buttoncolor = colors.red
+local buttonselectcolor = colors.lime
+local desktopcolor = colors.black
+
+function sendLevel()
+  if level > userlevel then
+    level = userlevel
+  end
+  modem.transmit(server,server,"level "..level)
+  if level < 1 then
+    chat.say("Warning! Not Enpugh POWAAAA")
+  elseif level <= max then
+    chat.say("PP mode : "..mode[level])
+  else
+    chat.say("Unauthorized message")
+  end
+end
+
+function getButtonNumber(x, y)
+  if (x > 2) and (x < 2 + bmaxx) then
+    for i = 0, max - 1, 1 do
+      local ty = 2 + i*(bmaxy + 1)
+      if (y >= ty) and (y <= ty + bmaxy) then
+        return i + 1
+      end
+    end
+  end
+  return 65536  
+end
+
+function drawButton(x, y, text, color)
+  monitor.setTextColor(textcolor)
+  monitor.setBackgroundColor(color)
+  for i = y, y + bmaxy - 1, 1 do
+    monitor.setCursorPos(x, i)
+    monitor.write(bbg)
+  end
+  monitor.setCursorPos(x + math.floor((bmaxx - string.len(text)) / 2), y + math.floor(bmaxy / 2))
+  monitor.write(text)
+  monitor.setBackgroundColor(desktopcolor)  
+end
+
+function drawGui()
+  print("Lefutott a drawGui")
+  monitor.setBackgroundColor(desktopcolor)
+  monitor.clear()
+  for i = 0, max - 1, 1 do
+    if i + 1 == userlevel then
+      drawButton(3, (2 + i*(bmaxy+1)), mode[i+1], buttonselectcolor)
+    else
+      drawButton(3, (2 + i*(bmaxy+1)), mode[i+1], buttoncolor)
+    end  
+  end
+end
+
+
+sendLevel()
+for i = 1, bmaxx, 1 do
+  bbg = bbg.." "
+end
+local i = 4
+while i < 3 do
+  i = i + 1
+end
+
+drawGui()
+repeat
+  local event, p1, p2, p3, p4, p5 = os.pullEvent()
+  if event == "modem_message" then
+    if p4 == "empty" then
+      level = p3 - 1
+      sendLevel()
+    elseif p4 == "full" then
+      if (p3 == level + 1) and (level < userlevel) then
+        level = level + 1
+        sendLevel()
+      end
+    end    
+  end
+  if event == "monitor_touch" then
+    local pressed = getButtonNumber(p2, p3)
+    if pressed == userlevel then
+      userlevel = 65536
+    elseif pressed < 65536 then
+      userlevel = pressed
+    end
+    drawGui()
+    sendLevel()
+  end
+until false
+
