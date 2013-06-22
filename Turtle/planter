@@ -1,0 +1,21 @@
+
+
+function cycle()
+  turtle.select(1)
+  if turtle.place() and (turtle.getItemCount(16) > 0) then
+    turtle.select(16)
+    turtle.place()
+    turtle.select(1)
+  end
+end
+
+while turtle.getItemCount(1) > 0 do
+  turtle.select(1)
+  if not turtle.compare() then
+    cycle()
+  elseif turtle.getItemCount(16) > 0 then
+    turtle.select(16)
+    turtle.place()
+    turtle.select(1)
+  end
+end
