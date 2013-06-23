@@ -1,0 +1,26 @@
+
+
+function recharge()
+  shell.run("goto", "-3 64 -28")
+  shell.run("goto", "-2 64 -28")
+  turtle.select(1)
+  turtle.dropDown()
+end
+
+function discharge()
+  shell.run("goto", "-2 63 -19")
+  shell.run("goto", "0 63 -18")
+  turtle.select(1)
+  turtle.dropUp()
+end
+
+repeat
+  discharge()
+  local event = os.pullEvent("redstone")
+  turtle.suckUp()
+  
+  recharge()
+  while turtle.getItemCount(1) == 0 do
+    sleep(1)
+  end
+until false

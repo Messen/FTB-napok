@@ -1,0 +1,16 @@
+
+local x, y, z = gps.locate()
+local hx = 10
+local hy = 63
+local hz = -35
+
+print("Fuel level: "..turtle.getFuelLevel())
+print("Actual coordinates: "..x..", "..y..", "..z)
+print("Home coordinates  : "..hx..", "..hy..", "..hz)
+
+sleep(5)
+
+shell.run("goto", ""..hx.." "..hy.." "..hz)
+
+
+

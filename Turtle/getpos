@@ -1,0 +1,7 @@
+local x, y, z = gps.locate()
+
+print("x: "..x)
+print("y: "..y)
+print("z: "..z)
+
+

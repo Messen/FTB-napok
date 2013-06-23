@@ -1,0 +1,106 @@
+local tArgs = {...}
+local t = {}
+t[1] = tonumber(tArgs[1])
+t[2] = tonumber(tArgs[2])
+t[3] = tonumber(tArgs[3])
+local cur = {}
+local dist = {}
+local dir
+
+function getPosition()
+   return gps.locate()
+end
+
+function forward()
+  while not turtle.forward() do
+    turtle.up()
+  end
+end
+
+function setCurrentPosition()
+	cur[1], cur[2], cur[3] = getPosition()
+end
+
+function getDirection()
+   local x, y, z = getPosition()
+   forward()
+   local nx, ny, nz = getPosition()
+   if (x == nx) then
+      if (nz > z) then
+         return 2
+      else
+         return 0
+      end
+   else
+      if (nx > x) then
+         return 3
+      else
+         return 1
+      end
+   end
+   return 65536
+end
+
+
+function setDirection(toDir)
+   while toDir ~= dir do
+      turtle.turnLeft()
+      if dir == 3 then 
+         dir = 0 
+      else 
+         dir = dir + 1 
+      end
+   end   
+end
+
+function move(axis)
+  -- x=1 y=2 z=3
+  local dist = math.abs(t[axis] - cur[axis])
+  if axis == 2 then
+    if (t[axis] > cur[axis]) then
+      for i = 1, dist do
+        turtle.up()
+      end
+    else
+      for i = 1, dist do
+        turtle.down()
+      end
+    end	
+  else
+    if (t[axis] > cur[axis]) then
+      if axis == 1 then
+        setDirection(3)
+      else
+        setDirection(2)
+      end
+    else
+      if axis == 1 then
+        setDirection(1)
+      else
+        setDirection(0)
+      end
+    end
+    for i = 1, dist do
+      forward()
+    end
+  end
+end
+
+-- Main Program
+
+if not t[1] or not t[2] or not t[3] then
+   print("Usage: goto x y z")
+   exit()
+end
+
+dir = getDirection()
+setCurrentPosition()
+
+move(1) -- X direction
+setCurrentPosition()
+move(3) -- Z direction
+setCurrentPosition()
+move(2) -- Y direction
+setCurrentPosition()
+
+
