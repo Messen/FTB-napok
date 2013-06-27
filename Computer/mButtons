@@ -1,0 +1,144 @@
+
+local monitor
+local STATE = 0
+local btns = {}
+local Button = {
+  x = 0,
+  y = 0,
+  id = 0,
+  name = "",
+  size = 0,
+  st = 0,
+  active = false,
+  colori = colors.lime,
+  colora = colors.green,
+  colort = colors.black,
+  
+  new = function(this, o)
+    o = o or {}
+    setmetatable(o, this)
+    this.__index = this
+    return o
+  end,
+  
+  draw = function(this, monitor)
+    local bg = ""
+    if this.size == 0 then
+      this.size = 2 + string.len(this.name)
+    end
+    for i = 1, this.size, 1 do
+      bg = bg.." "
+    end
+    if this.active then
+      monitor.setBackgroundColor(this.colora)
+    else
+      monitor.setBackgroundColor(this.colori)
+    end
+    monitor.setTextColor(this.colort)
+    for i = 0, 2, 1 do
+      monitor.setCursorPos(this.x, this.y + i)
+      monitor.write(bg)
+    end
+    local tx = string.len(bg) - string.len(this.name)
+    tx = (tx / 2)
+    monitor.setCursorPos(this.x + tx, this.y + 1)
+    monitor.write(this.name)
+  end,
+  
+  pressed = function(this, o)
+    if (this.st ~= STATE) and (this.st ~= 0) then
+      this.active = false
+      return false
+    end
+    if (o.x >= this.x) and (o.x <= this.x + this.size) then
+      if (o.y >= this.y) and (o.y <= this.y + 2) then
+        this.active = true
+        return true
+      end
+    end
+    this.active = false
+    return false
+  end
+}
+
+
+function drawGui(bg)
+  if monitor == nil then
+    print("Set the monitor before please!")
+    return
+  end
+  if bg == nil then
+    bg = colors.black
+  end
+  monitor.setBackgroundColor(bg)
+  monitor.clear()
+  local idx = 1
+  while idx <= table.getn(btns) do
+    if (btns[idx].st == STATE) or btns[idx].st == 0 then
+      btns[idx]:draw(monitor)
+    end
+    idx = idx + 1
+  end
+end
+
+function chkPressed(x1, y1)
+  local result = 0
+  local point = {}
+  point.x = x1
+  point.y = y1
+  local idx = 1
+  while idx <= table.getn(btns) do
+    if btns[idx]:pressed(point) then
+      result = btns[idx].id
+    end
+    idx = idx + 1
+  end
+  drawGui()
+  return result
+end
+
+function addButton(x, y, size, id, state, name)
+  local btn = Button:new()
+  btn.x = x
+  btn.y = y
+  btn.id = id
+  btn.name = name
+  btn.st = state
+  btn.size = size
+  table.insert(btns, btn)
+end
+
+function setButtonColors(id, inactive, active, text)
+  local idx = 1
+  while idx <= table.getn(btns) do
+    if btns[idx].id == id then
+      btns[idx].colori = inactive
+      btns[idx].colora = active
+      btns[idx].colort = text
+    end
+    idx = idx + 1
+  end
+  drawGui()
+end
+
+function setMonitor(side)
+  if peripheral.isPresent(side) then
+    monitor = peripheral.wrap(side)
+  else
+    print("Wrong side for the monitor")
+  end
+end
+
+function setState(st)
+  STATE = st
+end
+
+function clear(bgcolor)
+  if monitor ~= nil then
+    if bgcolor == nil then
+      bgcolor = colors.black
+    end
+    monitor.setBackgroundColor(bgcolor)
+    monitor.clear()
+  end
+end

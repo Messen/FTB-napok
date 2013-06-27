@@ -1,0 +1,31 @@
+
+os.loadAPI("mButtons")
+
+mButtons.setMonitor("right")
+
+-- x, y, width, id, state, name
+mButtons.addButton(2,2,6,1,0,"Test")
+mButtons.addButton(2,8,0,12,1,"Custom colored big button")
+mButtons.addButton(10,2,6,65536,1,"Exit")
+
+mButtons.setButtonColors(65536, colors.red, colors.blue, colors.yellow)
+mButtons.setButtonColors(12, colors.pink, colors.orange, colors.cyan)
+
+mButtons.setState(0)
+
+local id = 0
+repeat
+  mButtons.drawGui()
+
+  local event, side, x, y = os.pullEvent("monitor_touch")
+  id = mButtons.chkPressed(x, y)
+  print("x: "..x.." y: "..y.." id: "..id)
+  if id == 1 then
+    mButtons.setState(1)
+  end
+
+until id == 65536
+
+mButtons.clear(colors.lime)
+
+os.unloadAPI("mButtons")
