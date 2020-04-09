@@ -23,11 +23,11 @@ end
 
 function fw() -- move forward
   chkfuel()
-  chkinv()
+  while turtle.digUp() do
+    chkinv()
+  end
   while not turtle.forward() do
     turtle.dig()
-  end
-  while turtle.digUp() do
     chkinv()
   end
 end
@@ -64,8 +64,6 @@ end
 function up() -- move up and turn right direction
   chkfuel()
   chkinv()
-  turtle.turnLeft()
-  turtle.turnLeft()
   while not turtle.up() do
     turtle.digUp()
   end
@@ -74,9 +72,12 @@ end
 
 -- main loop
 -- dig 7 layers
-for i = 1, 6, 1 do
+for i = 1, 6, 2 do
   layer()
   if i < 6 then
+    turtle.turnLeft()
+    turtle.turnLeft()
+    up()
     up()
   end
 end

@@ -1,1 +1,14 @@
-turtle.dig()
+
+local args = {...}
+local num = 1
+if table.getn(args) > 0 then
+  num = args[1]
+end
+
+for i = 1, num do
+  turtle.digDown()
+  turtle.forward()
+end
+
+
+

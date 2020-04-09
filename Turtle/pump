@@ -1,0 +1,28 @@
+
+
+if turtle.getItemCount(1) < 8 then
+  error("Not enough block")
+end
+
+function fw()
+  turtle.dig()
+  turtle.digUp()
+  turtle.forward()
+  turtle.digUp()
+end
+
+turtle.select(1)
+
+for i=1,4,1 do
+  for i=1,2,1 do
+    turtle.placeDown()
+    fw()
+  end
+  turtle.turnLeft()  
+end
+
+fw()
+turtle.turnLeft()
+turtle.select(2)
+turtle.place()
+

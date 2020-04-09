@@ -1,0 +1,10 @@
+
+local args={...}
+local steps = 1
+if table.getn(args) > 0 then
+  steps = args[1]
+end
+
+for i=1,steps do
+  turtle.back()
+end
